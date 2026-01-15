@@ -1,9 +1,14 @@
 <?php
+require __DIR__ . '/vendor/autoload.php'
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
 // db.php - Conexão simples (Refatorada)
-$host = 'localhost';
-$banco = 'logidrone_legado_pt'; // Mudamos o nome para refletir a nova versão
-$usuario = 'root';
-$senha = ''; 
+$host =  getEnv('DB_HOST') ?? 'localhost';
+$banco = getEnv('DB_NAME');
+$usuario = getEnv('DB_USER');
+$senha = getEnv('DB_PASS'); 
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$banco;charset=$charset";
@@ -16,7 +21,6 @@ $opcoes = [
 try {
     $conexao = new PDO($dsn, $usuario, $senha, $opcoes);
 } catch (\PDOException $e) {
-    // Mantendo o comportamento inseguro original de exibir o erro
     throw new \PDOException($e->getMessage(), (int)$e->getCode());
 }
 ?>

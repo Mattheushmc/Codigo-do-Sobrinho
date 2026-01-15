@@ -1,5 +1,4 @@
 <?php
-// SistemaLogistico.php - A Lógica Legada Encapsulada
 
 class SistemaLogistico {
     private $conexao;
@@ -38,7 +37,6 @@ class SistemaLogistico {
     }
 
     public function processarPagamento($pedidoId) {
-        // 1. Lê pedido
         $stmt = $this->conexao->prepare("SELECT * FROM pedidos WHERE id = ?");
         $stmt->execute([$pedidoId]);
         $pedido = $stmt->fetch();
@@ -47,7 +45,6 @@ class SistemaLogistico {
             return ['erro' => 'Pedido inválido ou já processado'];
         }
 
-        // 2. Verifica estoque (SEM LOCK - Race Condition mantida propositalmente)
         $stmt = $this->conexao->prepare("SELECT estoque FROM produtos WHERE id = ?");
         $stmt->execute([$pedido['produto_id']]);
         $produto = $stmt->fetch();
@@ -58,12 +55,10 @@ class SistemaLogistico {
 
         $this->simularLatencia();
 
-        // 3. Deduz estoque
         $novoEstoque = $produto['estoque'] - $pedido['quantidade'];
         $stmt = $this->conexao->prepare("UPDATE produtos SET estoque = ? WHERE id = ?");
         $stmt->execute([$novoEstoque, $pedido['produto_id']]);
 
-        // 4. Marca pago
         $stmt = $this->conexao->prepare("UPDATE pedidos SET status = 'PAGO' WHERE id = ?");
         $stmt->execute([$pedidoId]);
 
@@ -71,13 +66,12 @@ class SistemaLogistico {
     }
 
     public function atualizarDrone($droneId, $dados) {
-        $estadoDrone = $dados['estado']; // 'ENTREGANDO', 'RETORNANDO', 'OCIOSO'
+        $estadoDrone = $dados['estado']; 
         $bateria = $dados['bateria'];
 
         $stmt = $this->conexao->prepare("UPDATE drones SET status = ?, nivel_bateria = ? WHERE id = ?");
         $stmt->execute([$estadoDrone, $bateria, $droneId]);
 
-        // Lógica falha original mantida: Se está RETORNANDO ou OCIOSO, marca entregas como ENTREGUE
         if ($estadoDrone === 'RETORNANDO' || $estadoDrone === 'OCIOSO') {
             $stmt = $this->conexao->prepare("SELECT id FROM pedidos WHERE drone_id = ? AND status = 'ENVIADO'");
             $stmt->execute([$droneId]);
@@ -93,7 +87,6 @@ class SistemaLogistico {
     }
 
     public function obterRotas() {
-        // Retorna GeoJSON complexo (mantendo o bug de contrato de API)
         return [
             'tipo' => 'ColecaoDeFeatures',
             'features' => [
