@@ -1,20 +1,27 @@
 <?php
 
-require 'Models/db.php';
-require 'Controllers/SistemaLogistico.php'; 
+require 'Controllers/Logistica/Produto.php';
 
 header('Content-Type: application/json');
+$banana = new Produto(1, "Banana", 2.50);
 
-$acao = $_GET['acao'] ?? ''; 
-$sistema = new SistemaLogistico($conexao);
+$request_uri = $_SERVER('REQUEST_URI');
 
-switch ($acao) {
-    case 'criar_pedido':
-        $dados = json_decode(file_get_contents('php://input'), true);
-        echo json_encode($sistema->criarPedido($dados));
+function encode($obj, $method){
+    json_encode($obj->)
+}
+
+switch ($request_uri) {
+    case '/' :
+
         break;
 
-    case 'pagar_pedido':
+    case '/criarProduto':
+        $dados = json_decode(file_get_contents('php://input'), true);
+        echo json_encode($banana->criarProduto($dados));
+        break;
+
+    case '/atualizarpedido':
         $id = $_GET['id_pedido'];
         echo json_encode($sistema->processarPagamento($id));
         break;

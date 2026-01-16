@@ -1,17 +1,8 @@
 <?php
 
 class SistemaLogistico {
-    private $conexao;
 
-    public function __construct($conexaoDb) {
-        $this->conexao = $conexaoDb;
-    }
-
-    private function simularLatencia() {
-        sleep(1);
-    }
-
-    public function criarPedido($dados) {
+    public function criarPedido($dados, $conexao) {
         $produtoId = $dados['produto_id'] ?? null;
         $quantidade = $dados['quantidade'] ?? 0;
 
@@ -19,8 +10,7 @@ class SistemaLogistico {
             return ['erro' => 'Dados inválidos'];
         }
 
-        // Busca preço
-        $stmt = $this->conexao->prepare("SELECT preco FROM produtos WHERE id = ?");
+        $stmt = $this->$conexao->prepare("SELECT preco FROM produtos WHERE id = ?");
         $stmt->execute([$produtoId]);
         $produto = $stmt->fetch();
 
@@ -36,8 +26,8 @@ class SistemaLogistico {
         return ['status' => 'Pedido criado', 'id_pedido' => $this->conexao->lastInsertId()];
     }
 
-    public function processarPagamento($pedidoId) {
-        $stmt = $this->conexao->prepare("SELECT * FROM pedidos WHERE id = ?");
+    public function processarPagamento($pedidoId, $conexao) {
+        $stmt = $this->$conexao->prepare("SELECT * FROM pedidos WHERE id = ?");
         $stmt->execute([$pedidoId]);
         $pedido = $stmt->fetch();
 
@@ -45,7 +35,7 @@ class SistemaLogistico {
             return ['erro' => 'Pedido inválido ou já processado'];
         }
 
-        $stmt = $this->conexao->prepare("SELECT estoque FROM produtos WHERE id = ?");
+        $stmt = $this->$conexao->prepare("SELECT estoque FROM produtos WHERE id = ?");
         $stmt->execute([$pedido['produto_id']]);
         $produto = $stmt->fetch();
 
@@ -53,32 +43,31 @@ class SistemaLogistico {
             return ['erro' => 'Estoque insuficiente'];
         }
 
-        $this->simularLatencia();
 
         $novoEstoque = $produto['estoque'] - $pedido['quantidade'];
-        $stmt = $this->conexao->prepare("UPDATE produtos SET estoque = ? WHERE id = ?");
+        $stmt = $this->$conexao->prepare("UPDATE produtos SET estoque = ? WHERE id = ?");
         $stmt->execute([$novoEstoque, $pedido['produto_id']]);
 
-        $stmt = $this->conexao->prepare("UPDATE pedidos SET status = 'PAGO' WHERE id = ?");
+        $stmt = $this->$conexao->prepare("UPDATE pedidos SET status = 'PAGO' WHERE id = ?");
         $stmt->execute([$pedidoId]);
 
         return ['status' => 'Pagamento aceito', 'novo_estoque' => $novoEstoque];
     }
 
-    public function atualizarDrone($droneId, $dados) {
+    public function atualizarDrone($droneId, $dados, $conexao) {
         $estadoDrone = $dados['estado']; 
         $bateria = $dados['bateria'];
 
-        $stmt = $this->conexao->prepare("UPDATE drones SET status = ?, nivel_bateria = ? WHERE id = ?");
+        $stmt = $this->$conexao->prepare("UPDATE drones SET status = ?, nivel_bateria = ? WHERE id = ?");
         $stmt->execute([$estadoDrone, $bateria, $droneId]);
 
         if ($estadoDrone === 'RETORNANDO' || $estadoDrone === 'OCIOSO') {
-            $stmt = $this->conexao->prepare("SELECT id FROM pedidos WHERE drone_id = ? AND status = 'ENVIADO'");
+            $stmt = $this->$conexao->prepare("SELECT id FROM pedidos WHERE drone_id = ? AND status = 'ENVIADO'");
             $stmt->execute([$droneId]);
             $pedidos = $stmt->fetchAll();
 
             foreach ($pedidos as $p) {
-                $stmt = $this->conexao->prepare("UPDATE pedidos SET status = 'ENTREGUE' WHERE id = ?");
+                $stmt = $this->$conexao->prepare("UPDATE pedidos SET status = 'ENTREGUE' WHERE id = ?");
                 $stmt->execute([$p['id']]);
             }
         }

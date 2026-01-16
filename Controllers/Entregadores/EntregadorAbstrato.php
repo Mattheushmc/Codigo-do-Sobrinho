@@ -1,6 +1,7 @@
 <?php
 
 abstract class EntregadorAbstrato {
+
     private $id;
     private $posicaoAtual;
     private $statusConexao;
@@ -22,9 +23,10 @@ abstract class EntregadorAbstrato {
     abstract public function confirmarEntrega ($pedidoId) : bool;
     abstract public function reportarStatus();
 
-    public function getId(){
+    public function getId(): string{
     return $this->id;
 }
+
     public function setId($new_id){
     $this->id = $new_id;
 }

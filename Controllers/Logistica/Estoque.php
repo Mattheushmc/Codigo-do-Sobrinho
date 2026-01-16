@@ -1,7 +1,8 @@
 <?php
 
-class Estoque {
+ require 'Produto.php';
 
+class Estoque {
     private $produtoId;
     private $quantidadeDisponivel;
     private $quantidadeReservada;
@@ -9,13 +10,15 @@ class Estoque {
     private $localizacao;
     private $ultimaAtualizacao;
 
-    public function __construct($id, $qtDisponivel,$qtReservada, $qtMin, $localizacao, $atualizacao){
+    public function __construct($id, $qtDisponivel,$qtReservada, $qtMin, $localizacao, $atualizacao, $conexao){
         $this->produtoId = $id;
         $this->quantidadeDisponivel = $qtDisponivel;
         $this->quantidadeReservada = $qtReservada;
         $this->quantidadeMinima = $qtMin;
         $this->localizacao = $localizacao;
         $this->ultimaAtualizacao = $atualizacao;
+        $this->conexao = $conexao;
+
     }
 
     public function getProdutoId(){
@@ -55,7 +58,9 @@ class Estoque {
     $this->ultimaAtualizacao = $atualizacao;
 }
     public function verificarDisponibilidade($quantidade){
-    
+            
+        $value = ($quantidade >= $this->quantidadeDisponivel && $this->quantidadeDisponivel != 0) ? true : false;
+        return value;
     }
 
     public function bloquearEstoque($pedidoId, $quantidade, $timeout){
@@ -75,7 +80,7 @@ class Estoque {
     }
 
     public function registrarMovimentacao($tipo, $quantidade){
-    
+            
     }
 
 }

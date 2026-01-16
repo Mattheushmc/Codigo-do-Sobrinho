@@ -9,8 +9,9 @@ class Pedido {
     private  $enderecoEntrega;
     private  $tipoPagamento;
     private  $timestamp;
+    private  $conexao;
     
-       public function __construct($id,$clienteId, $dataCriacao, $status, $valorTotal, $enderecoEntrega, $tipoPagamento, $timestamp) {
+       public function __construct($id,$clienteId, $dataCriacao, $status, $valorTotal, $enderecoEntrega, $tipoPagamento, $timestamp, $conexao) {
     $this->id = $id;
     $this->clienteId = $clienteId;
     $this->dataCriacao = $dataCriacao;
@@ -19,6 +20,7 @@ class Pedido {
     $this->endrecoEntrega = $endrecoEntrega;
     $this->tipoPagamento = $tipoPagamento;
     $this->timestamp = $timestamp;
+    $this->conexao = $conexao;
 }
 
     public function getId(){
