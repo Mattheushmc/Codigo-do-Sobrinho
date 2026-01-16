@@ -1,14 +1,13 @@
 <?php
-require __DIR__ . '/vendor/autoload.php'
+require'vendor/autoload.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
-// db.php - Conexão simples (Refatorada)
-$host =  getEnv('DB_HOST') ?? 'localhost';
-$banco = getEnv('DB_NAME');
-$usuario = getEnv('DB_USER');
-$senha = getEnv('DB_PASS'); 
+$host =  $_ENV['DB_HOST'] ?? 'localhost';
+$banco = $_ENV['DB_NAME'];
+$usuario = $_ENV['DB_USER'];
+$senha = $_ENV['DB_PASS']; 
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$banco;charset=$charset";

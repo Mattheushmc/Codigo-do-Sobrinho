@@ -1,12 +1,11 @@
 <?php
-// index.php - A API Refatorada (Consumidor da Classe)
 
-require 'db.php';
-require 'SistemaLogistico.php'; // Importa a classe
+require 'Models/db.php';
+require 'Controllers/SistemaLogistico.php'; 
 
 header('Content-Type: application/json');
 
-$acao = $_GET['acao'] ?? ''; // 'action' virou 'acao'
+$acao = $_GET['acao'] ?? ''; 
 $sistema = new SistemaLogistico($conexao);
 
 switch ($acao) {
