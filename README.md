@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # LogiDrone (Sistema Legado - Refatorado PT-BR)
 
 Este projeto contém o código fonte do sistema original da LogiDrone, refatorado para utilizar **Português** e **Orientação a Objetos**. O projeto documenta uma arquitetura legada com problemas conhecidos de concorrência que foram mantidos para fins educacionais e de simulação.
@@ -533,4 +532,3 @@ php -S localhost:8000
 - `index.php`: Ponto de entrada que instancia a classe.
 - `db.php`: Configuração do banco.
 - `schema.sql`: Definição do banco em Português.
->>>>>>> 6dfe3a873470bf861908113b0c75208fb30351f9
