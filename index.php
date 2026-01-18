@@ -25,12 +25,16 @@ switch ($request_uri) {
         break;
 
     case '/criarProduto':
-        // Este endpoint agora precisará de autenticação.
-        // A lógica de autenticação será adicionada em um commit futuro.
-        $dados = json_decode(file_get_contents('php://input'), true);
-        $produto = new Produto(null, $dados['nome'], $dados['preco'], $conexao);
-        $produto->criarProduto($dados);
-        echo json_encode(['mensagem' => 'Produto criado com sucesso (sem autenticação por enquanto)']);
+        try {
+            Auth::validateToken();
+            $dados = json_decode(file_get_contents('php://input'), true);
+            $produto = new Produto(null, $dados['nome'], $dados['preco'], $conexao);
+            $produto->criarProduto($dados);
+            echo json_encode(['mensagem' => 'Produto criado com sucesso']);
+        } catch (Exception $e) {
+            header('HTTP/1.0 401 Unauthorized');
+            echo json_encode(['mensagem' => 'Acesso não autorizado: ' . $e->getMessage()]);
+        }
         break;
 
     case '/atualizarpedido':

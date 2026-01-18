@@ -3,6 +3,7 @@
 require_once 'vendor/autoload.php';
 
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 class Auth {
     private static $secret_key;
@@ -19,6 +20,18 @@ class Auth {
         ];
 
         return JWT::encode($payload, self::$secret_key, 'HS256');
+    }
+
+    public static function validateToken() {
+        if (!isset($_SERVER['HTTP_AUTHORIZATION'])) {
+            throw new Exception('Token de autorização não encontrado');
+        }
+
+        $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
+        $arr = explode(' ', $authHeader);
+        $token = $arr[1];
+
+        return JWT::decode($token, new Key(self::$secret_key, 'HS256'));
     }
 }
 
