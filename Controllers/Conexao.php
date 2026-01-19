@@ -6,4 +6,5 @@ class Conexao {
   
         $this->conexao = $conexaoDb;
     }
+}
 ?>
