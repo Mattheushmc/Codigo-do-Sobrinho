@@ -13,7 +13,7 @@ try {
 
     $pdo->exec("USE $banco");
 
-    $sql = file_get_contents('schema.sql');
+    $sql = file_get_contents(__DIR__ . '/schema.sql');
     $comandos = array_filter(array_map('trim', explode(';', $sql)));
 
     foreach ($comandos as $cmd) {
